@@ -1,3 +1,10 @@
-import RNInflate from './RNInflate';
+import { Model, Inflater } from './bridge'
 
-export default RNInflate;
+const model = Model(null)
+class RNInflate extends Inflater {
+  constructor(irModel) {
+    super(irModel)
+  }
+}
+
+export default new RNInflate(model)

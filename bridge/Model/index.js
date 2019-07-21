@@ -12,10 +12,9 @@ function IRModel(record) {
   this.platform = pathOr('android', ['platform'], record)
   this.headers = pathOr({}, ['headers'], record)
   this.body = pathOr([], ['body'], record)
-  this.params = pathOr([], ['params'], record)
+  this.params = pathOr({}, ['params'], record)
   this.url = pathOr(null, ['url'], record)
-  this.response = pathOr(30000, ['response'], record)
-  this.deadline = pathOr(60000, ['deadline'], record)
+  this.timeout = pathOr({ response: 30000, deadline: 60000 }, ['timeout'], record)
 }
 
 IRModel.prototype = {
@@ -37,73 +36,59 @@ IRModel.prototype = {
     return assocPath(['body'], body, this)
   },
   timeout: function(timeout) {
-    const { deadline, response } = timeout
-
-    return assocPath(['response'], response, this)
-      .assocPath(['deadline'], deadline, this)
+    return assocPath(['timeout'], timeout, this)
   },
   get: function(url) {
-    const { headers, params, response, deadline } = this
+    const { headers, params, timeout } = this
 
     return iRequest
       .get(url)
       .set(headers)
-      .timeout({
-        response: response, // Wait 5 seconds for the server to start sending,
-        deadline: deadline // but allow 1 minute for the file to finish loading.
-      })
+      .timeout(timeout)
       .use(prefix)
       .query(params)
   },
   post: function(url) {
-    const { headers, body, response, deadline } = this
+    const { headers, body, timeout } = this
 
     return iRequest
       .post(url)
       .set(headers)
-      .timeout({
-        response: response, // Wait 5 seconds for the server to start sending,
-        deadline: deadline // but allow 1 minute for the file to finish loading.
-      })
+      .timeout(timeout)
       .use(prefix)
       .send(body)
   },
   put: function(url) {
-    const { headers, body, response, deadline } = this
+    const { headers, body, timeout } = this
 
     return iRequest
       .put(url)
       .set(headers)
-      .timeout({
-        response: response, // Wait 5 seconds for the server to start sending,
-        deadline: deadline // but allow 1 minute for the file to finish loading.
-      })
+      .timeout(timeout)
       .use(prefix)
       .send(body)
   },
   delete: function(url) {
-    const { headers, response, deadline } = this
+    const { headers, timeout } = this
 
     return iRequest
       .delete(url)
       .set(headers)
-      .timeout({
-        response: response, // Wait 5 seconds for the server to start sending,
-        deadline: deadline // but allow 1 minute for the file to finish loading.
-      })
+      .timeout(timeout)
       .use(prefix)
   },
   inflate: function(url) {
-    const { headers, params, platform } = this
+    const { headers, params, platform, timeout } = this
 
     if (platform === 'android') {
-      return RNInflate.getRequest(url)
+      return RNInflate.getRequest(url, headers, params)
     }
 
     return request
       .get(url)
       .set(headers)
       .prefix(prefix)
+      .timeout(timeout)
       .query(params)
   }
 }

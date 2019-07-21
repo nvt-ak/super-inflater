@@ -6,6 +6,8 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableMapKeySetIterator;
+import com.facebook.react.bridge.ReadableType;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -43,15 +45,19 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void getRequest(String url, final Promise promise) throws IOException {
+  public void getRequest(String url, ReadableMap headers, ReadableMap params , final Promise promise) throws IOException {
     OkHttpClient client = new OkHttpClient();
-    Request request = new Request.Builder()
-              .url(url)
-              .get()
-              .addHeader("Accept", "*/*")
-              .addHeader("Host", "demo.3serp.vn:44393")
-              .addHeader("accept-encoding", "gzip, deflate")
-              .build();
+    HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
+
+    // Map all params to QueryParams
+    urlBuilder = addParams(urlBuilder, params);
+
+    String builderUrl = urlBuilder.build().toString();
+    Request.Builder builder = new Request.Builder();
+
+    // Map all headers if headers were existed
+    builder = addHeaders(builder, headers);
+    Request request = builder.url(builderUrl).get().build();
 
     client.newCall(request).enqueue(new Callback() {
       @Override
@@ -93,5 +99,47 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
     }
 
     return "";
+  }
+
+  private Request.Builder addHeaders(Request.Builder builder, ReadableMap headers) {
+    ReadableMapKeySetIterator iterator = headers.keySetIterator();
+
+    while (iterator.hasNextKey()) {
+      String key = iterator.nextKey();
+      String value = getStringValue(key, headers);
+
+      builder.addHeader(key, value);
+    }
+
+    return  builder;
+  }
+
+  private HttpUrl.Builder addParams(HttpUrl.Builder urlBuilder, ReadableMap params) {
+    ReadableMapKeySetIterator iterator = params.keySetIterator();
+
+    while (iterator.hasNextKey()) {
+      String key = iterator.nextKey();
+      String value = getStringValue(key, params);
+
+      urlBuilder.addQueryParameter(key, value);
+    }
+
+    return  urlBuilder;
+  }
+
+  private String getStringValue(String key, ReadableMap map) {
+    ReadableType type = map.getType(key);
+    String value;
+
+    switch (type) {
+      case Number:
+        value = Integer.toString(map.getInt(key));
+        break;
+      default:
+        value = map.getString(key);
+        break;
+    }
+
+    return value;
   }
 }
