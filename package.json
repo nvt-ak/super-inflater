@@ -22,5 +22,13 @@
     "superagent": "^5.1.0",
     "superagent-prefix": "^0.0.2"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/john-techfox/react-native-inflate.git"
+  },
+  "bugs": {
+    "url": "https://github.com/john-techfox/react-native-inflate/issues"
+  },
+  "homepage": "https://github.com/john-techfox/react-native-inflate#readme"
 }

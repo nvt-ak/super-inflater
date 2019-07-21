@@ -4,6 +4,8 @@
 ## Getting started
 
 `$ npm install react-native-inflate --save`
+OR
+`$ yarn add react-native-inflate --save`
 
 ### Mostly automatic installation
 
@@ -25,14 +27,14 @@
   - Add `import com.reactlibrary.RNInflatePackage;` to the imports at the top of the file
   - Add `new RNInflatePackage()` to the list returned by the `getPackages()` method
 2. Append the following lines to `android/settings.gradle`:
-  	```
-  	include ':react-native-inflate'
-  	project(':react-native-inflate').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-inflate/android')
-  	```
+    ```
+    include ':react-native-inflate'
+    project(':react-native-inflate').projectDir = new File(rootProject.projectDir,  '../node_modules/react-native-inflate/android')
+    ```
 3. Insert the following lines inside the dependencies block in `android/app/build.gradle`:
-  	```
+    ```
       compile project(':react-native-inflate')
-  	```
+    ```
 
 #### Windows
 [Read it! :D](https://github.com/ReactWindows/react-native)
@@ -44,10 +46,40 @@
 
 
 ## Usage
+### Import
 ```javascript
-import RNInflate from 'react-native-inflate';
-
-// TODO: What to do with the module?
-RNInflate;
+    import RNInflate from 'react-native-inflate';
 ```
-  
+### Headers, Params & Body
+* Use `set, query, send` function to set a header, param, body or use `set, query, send` many time to set multiple headers, params, body.
+```javascript
+RNInflate.
+    set('Content-Type', 'application/json').
+    set('Authorization', 'Bearer ****').
+    query('mobile', '0985****').
+    query('email', 'john@techfox.io')
+```
+### Request
+1. Can use normal request, there are all of `get`, `post`, `put`, `delete`.
+2. Inflate request only is `get request` and you can use `inflate` function.
+```javascript
+RNInflate.
+    set('Content-Type', 'application/json').
+    query('lang', 'vi-VN').
+    get(url).then(res => {
+      return res.body
+    }).catch(err => {
+      console.log('err', err)
+    })
+```
+* OR with `inflate` request
+```javascript
+RNInflate.
+    set('Content-Type', 'application/json').
+    query('lang', 'vi-VN').
+    inflate(url).then(res => {
+      return res
+    }).catch(err => {
+      console.log('err', err)
+    })
+```
