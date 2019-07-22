@@ -14,13 +14,11 @@
       "react-native"
     ],
     "license": "ISC",
-    "peerDependencies": {
-      "react-native": "^0.41.2",
-      "react-native-windows": "0.41.0-rc.1"
-    },
     "dependencies": {
-      "react-native": "^0.60.4",
-      "react-native-windows": "^0.59.0-rc.1"
+      "react-native": "^0.59.0",
+      "ramda": "^0.26.1",
+      "superagent": "^5.1.0",
+      "superagent-prefix": "^0.0.2"
     },
     "devDependencies": {},
     "_registry": "npm",

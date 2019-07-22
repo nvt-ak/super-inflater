@@ -59,6 +59,18 @@ RNInflate.
     query('mobile', '0985****').
     query('email', 'john@techfox.io')
 ```
+* Use `timeout` to set timeout for the request
+```javascript
+RNInflate.
+    .timeout({
+      response: 30000,
+      deadline: 60000
+    })
+    set('Content-Type', 'application/json').
+    set('Authorization', 'Bearer ****').
+    query('mobile', '0985****').
+    query('email', 'john@techfox.io')
+```
 ### Request
 1. Can use normal request, there are all of `get`, `post`, `put`, `delete`.
 2. Inflate request only is `get request` and you can use `inflate` function.
@@ -72,9 +84,10 @@ RNInflate.
       console.log('err', err)
     })
 ```
-* OR with `inflate` request
+* OR with `inflate` request, required `platform` because of `Android` is special
 ```javascript
 RNInflate.
+    platform(Platform.OS).
     set('Content-Type', 'application/json').
     query('lang', 'vi-VN').
     inflate(url).then(res => {

@@ -36,6 +36,14 @@ class Inflater {
 	inflate(url) {
 		return this.irModel.inflate(url)
 	}
+
+	timeout(value) {
+		return this.irModel.timeout(value)
+	}
+
+	platform(os) {
+		return this.irModel.platform(os)
+	}
 }
 
 export default Inflater

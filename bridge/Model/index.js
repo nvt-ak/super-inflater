@@ -9,12 +9,12 @@ function flexibleMerge(record, key, value) {
 }
 
 function IRModel(record) {
-  this.platform = pathOr('android', ['platform'], record)
+  this.os = pathOr('android', ['os'], record)
   this.headers = pathOr({}, ['headers'], record)
   this.body = pathOr([], ['body'], record)
   this.params = pathOr({}, ['params'], record)
   this.url = pathOr(null, ['url'], record)
-  this.timeout = pathOr({ response: 30000, deadline: 60000 }, ['timeout'], record)
+  this.timeup = pathOr({ response: 30000, deadline: 60000 }, ['timeup'], record)
 }
 
 IRModel.prototype = {
@@ -23,7 +23,7 @@ IRModel.prototype = {
     return assocPath(['headers'], headers, this)
   },
   platform: function(value) {
-    return assocPath(['platform'], value, this)
+    return assocPath(['os'], value, this)
   },
   query: function(key, value) {
     const params = flexibleMerge(this.params, key, value)
@@ -35,52 +35,52 @@ IRModel.prototype = {
 
     return assocPath(['body'], body, this)
   },
-  timeout: function(timeout) {
-    return assocPath(['timeout'], timeout, this)
+  timeout: function(value) {
+    return assocPath(['timeup'], value, this)
   },
   get: function(url) {
-    const { headers, params, timeout } = this
+    const { headers, params, timeup } = this
 
     return iRequest
       .get(url)
       .set(headers)
-      .timeout(timeout)
+      .timeout(timeup)
       .use(prefix)
       .query(params)
   },
   post: function(url) {
-    const { headers, body, timeout } = this
+    const { headers, body, timeup } = this
 
     return iRequest
       .post(url)
       .set(headers)
-      .timeout(timeout)
+      .timeout(timeup)
       .use(prefix)
       .send(body)
   },
   put: function(url) {
-    const { headers, body, timeout } = this
+    const { headers, body, timeup } = this
 
     return iRequest
       .put(url)
       .set(headers)
-      .timeout(timeout)
+      .timeout(timeup)
       .use(prefix)
       .send(body)
   },
   delete: function(url) {
-    const { headers, timeout } = this
+    const { headers, timeup } = this
 
     return iRequest
       .delete(url)
       .set(headers)
-      .timeout(timeout)
+      .timeout(timeup)
       .use(prefix)
   },
   inflate: function(url) {
-    const { headers, params, platform, timeout } = this
+    const { headers, params, os, timeup } = this
 
-    if (platform === 'android') {
+    if (os === 'android') {
       return RNInflate.getRequest(url, headers, params)
     }
 
@@ -88,7 +88,7 @@ IRModel.prototype = {
       .get(url)
       .set(headers)
       .prefix(prefix)
-      .timeout(timeout)
+      .timeout(timeup)
       .query(params)
   }
 }
