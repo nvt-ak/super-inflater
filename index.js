@@ -1,10 +1,10 @@
 import { Model, Inflater } from './bridge'
 
 const model = Model(null)
-class RNInflate extends Inflater {
+class SuperInflater extends Inflater {
   constructor(irModel) {
     super(irModel)
   }
 }
 
-export default new RNInflate(model)
+export default new SuperInflater(model)

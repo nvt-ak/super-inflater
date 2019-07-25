@@ -11,13 +11,16 @@ function flexibleMerge(record, key, value) {
 function IRModel(record) {
   this.os = pathOr('android', ['os'], record)
   this.headers = pathOr({}, ['headers'], record)
-  this.body = pathOr([], ['body'], record)
+  this.body = pathOr({}, ['body'], record)
   this.params = pathOr({}, ['params'], record)
   this.url = pathOr(null, ['url'], record)
   this.timeup = pathOr({ response: 30000, deadline: 60000 }, ['timeup'], record)
 }
 
 IRModel.prototype = {
+  fix: function(key, value) {
+    return assocPath([key], value, this)
+  },
   set: function(key, value) {
     const headers = flexibleMerge(this.headers, key, value)
     return assocPath(['headers'], headers, this)
@@ -77,19 +80,60 @@ IRModel.prototype = {
       .timeout(timeup)
       .use(prefix)
   },
-  inflate: function(url) {
+  getInflate: function(url) {
     const { headers, params, os, timeup } = this
 
     if (os === 'android') {
-      return RNInflate.getRequest(url, headers, params)
+      return RNInflate.get(url, headers, params)
     }
 
-    return request
+    return iRequest
       .get(url)
       .set(headers)
-      .prefix(prefix)
+      .use(prefix)
       .timeout(timeup)
       .query(params)
+  },
+  submitInflate: function(url) {
+    const { headers, body, os, timeup } = this
+
+    if (os === 'android') {
+      return RNInflate.post(url, headers, body)
+    }
+
+    return iRequest
+      .post(url)
+      .set(headers)
+      .timeout(timeup)
+      .use(prefix)
+      .send(body)
+  },
+  putInflate: function(url) {
+    const { headers, body, os, timeup } = this
+
+    if (os === 'android') {
+      return RNInflate.put(url, headers, body)
+    }
+
+    return iRequest
+      .put(url)
+      .set(headers)
+      .timeout(timeup)
+      .use(prefix)
+      .send(body)
+  },
+  deleteInflate: function(url) {
+    const { headers, os, timeup } = this
+
+    if (os === 'android') {
+      return RNInflate.delete(url, headers)
+    }
+
+    return iRequest
+      .delete(url)
+      .set(headers)
+      .timeout(timeup)
+      .use(prefix)
   }
 }
 

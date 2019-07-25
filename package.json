@@ -1,7 +1,7 @@
 {
-  "name": "react-native-inflate",
+  "name": "super-inflater",
   "author": "john@techfox.io",
-  "version": "0.5.0",
+  "version": "0.0.1",
   "description": "## Getting started",
   "main": "index.js",
   "scripts": {
@@ -12,11 +12,17 @@
     "react-native-inflate",
     "inflate",
     "deflate",
-    "gzip"
+    "gzip",
+    "super-inflater",
+    "inflater",
+    "deflate"
   ],
   "license": "ISC",
-  "dependencies": {
+  "peerDependencies": {
     "react-native": "^0.59.0",
+    "react-native-windows": "0.41.0-rc.1"
+  },
+  "dependencies": {
     "ramda": "^0.26.1",
     "superagent": "^5.1.0",
     "superagent-prefix": "^0.0.2"
@@ -24,10 +30,10 @@
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/john-techfox/react-native-inflate.git"
+    "url": "git@github.com:john-techfox/super-inflater.git"
   },
   "bugs": {
-    "url": "https://github.com/john-techfox/react-native-inflate/issues"
+    "url": "https://github.com/john-techfox/super-inflater/issues"
   },
-  "homepage": "https://github.com/john-techfox/react-native-inflate#readme"
+  "homepage": "https://github.com/john-techfox/super-inflater#readme"
 }

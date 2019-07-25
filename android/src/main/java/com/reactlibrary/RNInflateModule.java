@@ -6,37 +6,33 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.ReadableMapKeySetIterator;
-import com.facebook.react.bridge.ReadableType;
+import com.facebook.react.bridge.WritableMap;
+import com.reactlibrary.api.ApiManager;
+import com.reactlibrary.common.Utils;
 
-import android.os.AsyncTask;
-import android.util.Log;
-
-import org.json.JSONException;
-
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
-
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.HttpUrl;
 import okhttp3.Callback;
 
 public class RNInflateModule extends ReactContextBaseJavaModule {
 
   private final ReactApplicationContext reactContext;
+  private final ApiManager mApiManager;
+  private final Utils mUtils;
   private static final String REQUEST_ERROR = "REQUEST_ERROR";
-  private String inflateData = "";
+  private final OkHttpClient mClient;
+  private WritableMap inflateData;
 
   public RNInflateModule(ReactApplicationContext reactContext) {
     super(reactContext);
     this.reactContext = reactContext;
+    this.mApiManager = new ApiManager();
+    this.mClient = new OkHttpClient();
+    this.mUtils = new Utils();
   }
 
   @Override
@@ -45,21 +41,10 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void getRequest(String url, ReadableMap headers, ReadableMap params , final Promise promise) throws IOException {
-    OkHttpClient client = new OkHttpClient();
-    HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
+  public void get(String url, ReadableMap headers, ReadableMap params , final Promise promise) throws IOException {
+    Request mRequest = this.mApiManager.get(url, headers, params);
 
-    // Map all params to QueryParams
-    urlBuilder = addParams(urlBuilder, params);
-
-    String builderUrl = urlBuilder.build().toString();
-    Request.Builder builder = new Request.Builder();
-
-    // Map all headers if headers were existed
-    builder = addHeaders(builder, headers);
-    Request request = builder.url(builderUrl).get().build();
-
-    client.newCall(request).enqueue(new Callback() {
+    mClient.newCall(mRequest).enqueue(new Callback() {
       @Override
       public void onFailure(Call call, IOException e) {
         promise.reject(REQUEST_ERROR, e.getCause());
@@ -69,77 +54,73 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
       @Override
       public void onResponse(Call call, Response response) throws IOException {
         final InputStream in = response.body().byteStream();
-        inflateData = getDataInflate(in);
+        inflateData = mUtils.getDataInflate(in);
 
         promise.resolve(inflateData);
       }
     });
   }
 
-  private String getDataInflate(InputStream in) {
-    try {
-      // Decompress the bytes
-      Inflater deCompressor = new Inflater(true);
-      InflaterInputStream input = new InflaterInputStream(in, deCompressor);
+  @ReactMethod
+  public void post(String url, ReadableMap headers, String body , final Promise promise) throws IOException {
+    Request mRequest = this.mApiManager.post(url, headers, body);
 
-      BufferedReader b = new BufferedReader(new InputStreamReader(input, "UTF8"));
-      String line;
-      StringBuilder out = new StringBuilder();
-      while ((line = b.readLine()) != null) {
-        out.append(line);
+    mClient.newCall(mRequest).enqueue(new Callback() {
+      @Override
+      public void onFailure(Call call, IOException e) {
+        promise.reject(REQUEST_ERROR, e.getCause());
+        call.cancel();
       }
 
-      b.close();
-      input.close();
-      deCompressor.end();
-      return out.toString();
+      @Override
+      public void onResponse(Call call, Response response) throws IOException {
+        final InputStream in = response.body().byteStream();
+        inflateData = mUtils.getDataInflate(in);
 
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    return "";
+        promise.resolve(inflateData);
+      }
+    });
   }
 
-  private Request.Builder addHeaders(Request.Builder builder, ReadableMap headers) {
-    ReadableMapKeySetIterator iterator = headers.keySetIterator();
+  @ReactMethod
+  public void put(String url, ReadableMap headers, String body , final Promise promise) throws IOException {
+    Request mRequest = this.mApiManager.put(url, headers, body);
 
-    while (iterator.hasNextKey()) {
-      String key = iterator.nextKey();
-      String value = getStringValue(key, headers);
+    mClient.newCall(mRequest).enqueue(new Callback() {
+      @Override
+      public void onFailure(Call call, IOException e) {
+        promise.reject(REQUEST_ERROR, e.getCause());
+        call.cancel();
+      }
 
-      builder.addHeader(key, value);
-    }
+      @Override
+      public void onResponse(Call call, Response response) throws IOException {
+        final InputStream in = response.body().byteStream();
+        inflateData = mUtils.getDataInflate(in);
 
-    return  builder;
+        promise.resolve(inflateData);
+      }
+    });
   }
 
-  private HttpUrl.Builder addParams(HttpUrl.Builder urlBuilder, ReadableMap params) {
-    ReadableMapKeySetIterator iterator = params.keySetIterator();
+  @ReactMethod
+  public void delete(String url, ReadableMap headers, final Promise promise) throws IOException {
+    Request mRequest = this.mApiManager.delete(url, headers);
 
-    while (iterator.hasNextKey()) {
-      String key = iterator.nextKey();
-      String value = getStringValue(key, params);
+    mClient.newCall(mRequest).enqueue(new Callback() {
+      @Override
+      public void onFailure(Call call, IOException e) {
+        promise.reject(REQUEST_ERROR, e.getCause());
+        call.cancel();
+      }
 
-      urlBuilder.addQueryParameter(key, value);
-    }
+      @Override
+      public void onResponse(Call call, Response response) throws IOException {
+        final InputStream in = response.body().byteStream();
+        inflateData = mUtils.getDataInflate(in);
 
-    return  urlBuilder;
-  }
-
-  private String getStringValue(String key, ReadableMap map) {
-    ReadableType type = map.getType(key);
-    String value;
-
-    switch (type) {
-      case Number:
-        value = Integer.toString(map.getInt(key));
-        break;
-      default:
-        value = map.getString(key);
-        break;
-    }
-
-    return value;
+        promise.resolve(inflateData);
+      }
+    });
   }
 }
