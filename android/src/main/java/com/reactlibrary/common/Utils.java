@@ -1,11 +1,11 @@
 package com.reactlibrary.common;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 import com.reactlibrary.json.RNHelper;
 
-import java.io.BufferedReader;
+import java.io.BufferedInputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
@@ -23,11 +23,12 @@ public class Utils {
             Inflater deCompressor = new Inflater(true);
             InflaterInputStream input = new InflaterInputStream(in, deCompressor);
 
-            BufferedReader b = new BufferedReader(new InputStreamReader(input, "UTF8"));
-            String line;
+            BufferedInputStream b = new BufferedInputStream(input);
+            byte[] buff = new byte[1024];
+            int len;
             StringBuilder out = new StringBuilder();
-            while ((line = b.readLine()) != null) {
-                out.append(line);
+            while ((len = b.read(buff)) >0) {
+                out.append(new String(buff, 0, len));
             }
 
             b.close();
@@ -41,6 +42,9 @@ public class Utils {
             return mapWrite;
 
         } catch (Exception e) {
+            e.printStackTrace();
+
+            mapWrite = Arguments.createMap();
             mapWrite.putString("message", e.getMessage());
         }
 
