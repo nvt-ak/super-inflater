@@ -4,6 +4,8 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 import com.reactlibrary.json.RNHelper;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
+
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.util.zip.Inflater;
@@ -19,23 +21,19 @@ public class Utils {
 
     public WritableMap getDataInflate(InputStream in) {
         try {
-            // Decompress the bytes
             Inflater deCompressor = new Inflater(true);
             InflaterInputStream input = new InflaterInputStream(in, deCompressor);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
 
+            byte[] buffer = new byte[8192];
+            int length;
             BufferedInputStream b = new BufferedInputStream(input);
-            byte[] buff = new byte[1024];
-            int len;
-            StringBuilder out = new StringBuilder();
-            while ((len = b.read(buff)) >0) {
-                out.append(new String(buff, 0, len));
+
+            while ((length = b.read(buffer)) > 0) {
+                out.write(buffer, 0, length);
             }
 
-            b.close();
-            input.close();
-            deCompressor.end();
-
-            String response = out.toString();
+            String response = new String(out.toByteArray(), "UTF-8");
             String validJson = formatString(response);
 
             mapWrite = mHelper.jsonToReact(validJson);
