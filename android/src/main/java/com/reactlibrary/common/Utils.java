@@ -34,9 +34,9 @@ public class Utils {
             }
 
             String response = new String(out.toByteArray(), "UTF-8");
-            String validJson = formatString(response);
+            // String validJson = formatString(response);
 
-            mapWrite = mHelper.jsonToReact(validJson);
+            mapWrite = mHelper.jsonToReact(response);
             return mapWrite;
 
         } catch (Exception e) {
