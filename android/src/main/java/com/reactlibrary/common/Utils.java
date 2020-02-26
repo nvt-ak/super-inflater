@@ -57,7 +57,6 @@ public class Utils {
         text = text.replace(":\"\",", ":[dot_mama]");
         text = text.replace(":\"\"]", ":[dot_mama1]");
         text = text.replace(":\"\"}", ":[dot_mama2]");
-        text = text.replace("\"\"", "\"");
         text = text.replace(":[dot_mama]", ":\"\",");
         text = text.replace(":[dot_mama1]", ":\"\"]");
         text = text.replace(":[dot_mama2]", ":\"\"}");
