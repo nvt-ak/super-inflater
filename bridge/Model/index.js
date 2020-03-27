@@ -69,17 +69,16 @@ IRModel.prototype = {
       return RNInflate.multiPost(url, headers, body, files)
     }
     var req = iRequest
+    .post(url)
     .set(headers)
     .timeout(timeup)
     .use(prefix)
-    .field('dataSet', body)
+    
     files.forEach((file)=> {
       req.attach('files', file);
     });
-    req.end(callback);
-    return req
-      .post(url)
-      
+    return req.field('dataSet', body)
+    
   },
   put: function(url) {
     const { headers, body, timeup } = this
