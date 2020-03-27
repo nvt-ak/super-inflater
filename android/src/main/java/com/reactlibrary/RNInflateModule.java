@@ -6,10 +6,12 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.reactlibrary.api.ApiManager;
 import com.reactlibrary.common.Utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import okhttp3.Call;
@@ -64,6 +66,27 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void post(String url, ReadableMap headers, String body , final Promise promise) throws IOException {
     Request mRequest = this.mApiManager.post(url, headers, body);
+
+    mClient.newCall(mRequest).enqueue(new Callback() {
+      @Override
+      public void onFailure(Call call, IOException e) {
+        promise.reject(REQUEST_ERROR, e.getCause());
+        call.cancel();
+      }
+
+      @Override
+      public void onResponse(Call call, Response response) throws IOException {
+        final InputStream in = response.body().byteStream();
+        inflateData = mUtils.getDataInflate(in);
+
+        promise.resolve(inflateData);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void multiPost(String url, ReadableMap headers, String body , ReadableArray files, final Promise promise) throws IOException {
+    Request mRequest = this.mApiManager.multiPost(url, headers, body, files);
 
     mClient.newCall(mRequest).enqueue(new Callback() {
       @Override

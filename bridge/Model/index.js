@@ -15,10 +15,12 @@ function IRModel(record) {
   this.params = pathOr({}, ['params'], record)
   this.url = pathOr(null, ['url'], record)
   this.timeup = pathOr({ response: 30000, deadline: 60000 }, ['timeup'], record)
+  this.files = pathOr([], ['files'], record)
 }
 
 IRModel.prototype = {
   fix: function(key, value) {
+    console.log('fix', value)
     return assocPath([key], value, this)
   },
   set: function(key, value) {
@@ -60,6 +62,24 @@ IRModel.prototype = {
       .timeout(timeup)
       .use(prefix)
       .send(body)
+  },
+  field: function(body) {
+    const { headers, timeup, os, url, files } = this
+    if (os === 'android') {
+      return RNInflate.multiPost(url, headers, body, files)
+    }
+    var req = iRequest
+    .set(headers)
+    .timeout(timeup)
+    .use(prefix)
+    .field('dataSet', body)
+    files.forEach((file)=> {
+      req.attach('files', file);
+    });
+    req.end(callback);
+    return req
+      .post(url)
+      
   },
   put: function(url) {
     const { headers, body, timeup } = this
