@@ -73,10 +73,9 @@ IRModel.prototype = {
     .set(headers)
     .timeout(timeup)
     .use(prefix)
-    
-    files.forEach((file)=> {
-      req.attach('files', file);
-    });
+    files.map((file, i)=> {
+      req.attach(`file ${i}`, file.uri)
+    })
     return req.field('dataSet', body)
     
   },
