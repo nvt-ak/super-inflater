@@ -64,7 +64,6 @@ public class Utils {
         text = text.replace("\"{", "{");
         text = text.replace("}\"", "}");
         text = text.replace("]\"", "]");
-        text = text.replace("\"\"", "null");
 
         return text;
     }
