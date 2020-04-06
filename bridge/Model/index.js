@@ -14,7 +14,7 @@ function IRModel(record) {
   this.body = pathOr({}, ['body'], record)
   this.params = pathOr({}, ['params'], record)
   this.url = pathOr(null, ['url'], record)
-  this.timeup = pathOr({ response: 30000, deadline: 60000 }, ['timeup'], record)
+  this.timeup = pathOr({ response: 60000, deadline: 90000 }, ['timeup'], record)
   this.files = pathOr([], ['files'], record)
 }
 
