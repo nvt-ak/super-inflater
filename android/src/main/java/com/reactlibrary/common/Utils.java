@@ -64,6 +64,23 @@ public class Utils {
         text = text.replace("\"{", "{");
         text = text.replace("}\"", "}");
         text = text.replace("]\"", "]");
+        // Pattern pattern = Pattern.compile("\"([^{\"]*)\"\\s*:\\s*\"(\\b[^\"\\s*,]*\\b)\"");
+        // Matcher matcher = pattern.matcher(text);
+        // while (matcher.find()) {
+        //     System.out.println("group 1: " + matcher.group(1));
+        //     System.out.println("group 2: " + matcher.group(2));
+        // }
+        // text = text.replaceAll("\"([^{\"]*)\"\\s*:\\s*\"([\\s]*)\"", "_._._$1_._._:_._._$2_._._");
+
+        // text = text.replaceAll("\"([^{\"]*)\"\\s*:\\s*\"(\\b[^\"\\s*,]+\\b)\"", "_._._$1_._._:_._._$2_._._");
+
+        // text = text.replaceAll("\"([^{\"]*)\"\\s*:\\s*\"(\\b[^\"\\s*,]*\\b)\"", "_._._$1_._._:_._._$2_._._");
+        // text = text.replaceAll("\"([^{\"]*)\"\\s*:\\s*([{\\[]?\\b[^\"\\s*,]+\\b)", "_._._$1_._._:$2");
+        // text = text.replaceAll("\"([^{\"]*)\"\\s*:\\s*([{\\[]?\\b[^\"\\s*,]*\\b)", "_._._$1_._._:$2");
+        // text = text.replaceAll("\"(.*)\"\\s*:\\s*\"(.*)\"", "_._._$1_._._:_._._$2_._._");
+        // text = text.replaceAll("\"([^{\"]*)\"\\s*:\\s*([{\\[]+)", "_._._$1_._._:$2");
+        // text = text.replace("\"", "\\\"");
+        // text = text.replace("_._._", "\"");
 
         return text;
     }
