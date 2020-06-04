@@ -11,6 +11,8 @@ import java.io.InputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
+import okhttp3.Response;
+
 public class Utils {
     private RNHelper mHelper;
     private WritableMap mapWrite;
@@ -18,25 +20,42 @@ public class Utils {
     public void Utils() {
         this.mHelper = new RNHelper();
     }
+    private String mZips[] = new String[] {"deflate", "gzip"};
 
-    public WritableMap getDataInflate(InputStream in) {
+    private boolean isZipped(Response response) {
+        String header = response.header("Content-Encoding");
+        for (int i = 0; i < mZips.length; i++) {
+            boolean flag = mZips[i].equalsIgnoreCase(header);
+            if (flag) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public WritableMap getDataInflate(Response res) {
         try {
-            Inflater deCompressor = new Inflater(true);
-            InflaterInputStream input = new InflaterInputStream(in, deCompressor);
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            String validJson;
+            if (isZipped(res)) {
+                final InputStream in = res.body().byteStream();
+                Inflater deCompressor = new Inflater(true);
+                InflaterInputStream input = new InflaterInputStream(in, deCompressor);
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                byte[] buffer = new byte[8192];
+                int length;
+                BufferedInputStream b = new BufferedInputStream(input);
 
-            byte[] buffer = new byte[8192];
-            int length;
-            BufferedInputStream b = new BufferedInputStream(input);
+                while ((length = b.read(buffer)) > 0) {
+                    out.write(buffer, 0, length);
+                }
 
-            while ((length = b.read(buffer)) > 0) {
-                out.write(buffer, 0, length);
+                validJson = new String(out.toByteArray(), "UTF-8");
+            } else {
+                validJson = res.body().string();
             }
 
-            String response = new String(out.toByteArray(), "UTF-8");
-            String validJson = formatString(response);
-
             mapWrite = mHelper.jsonToReact(validJson);
+            mapWrite.putInt("statusCode", res.code());
             return mapWrite;
 
         } catch (Exception e) {
@@ -47,41 +66,5 @@ public class Utils {
         }
 
         return mapWrite;
-    }
-
-    private String formatString(String text) {
-        text = text.replace("\\n", "");
-        text = text.replace("\\", "");
-        text = text.replace(": ", ":");
-
-        text = text.replace(":\"\",", ":[dot_mama]");
-        text = text.replace(":\"\"]", ":[dot_mama1]");
-        text = text.replace(":\"\"}", ":[dot_mama2]");
-        text = text.replace(":[dot_mama]", ":\"\",");
-        text = text.replace(":[dot_mama1]", ":\"\"]");
-        text = text.replace(":[dot_mama2]", ":\"\"}");
-        text = text.replace("\"[", "[");
-        text = text.replace("\"{", "{");
-        text = text.replace("}\"", "}");
-        text = text.replace("]\"", "]");
-        // Pattern pattern = Pattern.compile("\"([^{\"]*)\"\\s*:\\s*\"(\\b[^\"\\s*,]*\\b)\"");
-        // Matcher matcher = pattern.matcher(text);
-        // while (matcher.find()) {
-        //     System.out.println("group 1: " + matcher.group(1));
-        //     System.out.println("group 2: " + matcher.group(2));
-        // }
-        // text = text.replaceAll("\"([^{\"]*)\"\\s*:\\s*\"([\\s]*)\"", "_._._$1_._._:_._._$2_._._");
-
-        // text = text.replaceAll("\"([^{\"]*)\"\\s*:\\s*\"(\\b[^\"\\s*,]+\\b)\"", "_._._$1_._._:_._._$2_._._");
-
-        // text = text.replaceAll("\"([^{\"]*)\"\\s*:\\s*\"(\\b[^\"\\s*,]*\\b)\"", "_._._$1_._._:_._._$2_._._");
-        // text = text.replaceAll("\"([^{\"]*)\"\\s*:\\s*([{\\[]?\\b[^\"\\s*,]+\\b)", "_._._$1_._._:$2");
-        // text = text.replaceAll("\"([^{\"]*)\"\\s*:\\s*([{\\[]?\\b[^\"\\s*,]*\\b)", "_._._$1_._._:$2");
-        // text = text.replaceAll("\"(.*)\"\\s*:\\s*\"(.*)\"", "_._._$1_._._:_._._$2_._._");
-        // text = text.replaceAll("\"([^{\"]*)\"\\s*:\\s*([{\\[]+)", "_._._$1_._._:$2");
-        // text = text.replace("\"", "\\\"");
-        // text = text.replace("_._._", "\"");
-
-        return text;
     }
 }

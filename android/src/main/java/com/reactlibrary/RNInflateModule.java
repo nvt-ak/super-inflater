@@ -55,9 +55,7 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
 
       @Override
       public void onResponse(Call call, Response response) throws IOException {
-        final InputStream in = response.body().byteStream();
-        inflateData = mUtils.getDataInflate(in);
-
+        inflateData = mUtils.getDataInflate(response);
         promise.resolve(inflateData);
       }
     });
@@ -76,9 +74,7 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
 
       @Override
       public void onResponse(Call call, Response response) throws IOException {
-        final InputStream in = response.body().byteStream();
-        inflateData = mUtils.getDataInflate(in);
-
+        inflateData = mUtils.getDataInflate(response);
         promise.resolve(inflateData);
       }
     });
@@ -97,9 +93,7 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
 
       @Override
       public void onResponse(Call call, Response response) throws IOException {
-        final InputStream in = response.body().byteStream();
-        inflateData = mUtils.getDataInflate(in);
-
+        inflateData = mUtils.getDataInflate(response);
         promise.resolve(inflateData);
       }
     });
@@ -118,9 +112,7 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
 
       @Override
       public void onResponse(Call call, Response response) throws IOException {
-        final InputStream in = response.body().byteStream();
-        inflateData = mUtils.getDataInflate(in);
-
+        inflateData = mUtils.getDataInflate(response);
         promise.resolve(inflateData);
       }
     });
@@ -129,7 +121,6 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void delete(String url, ReadableMap headers, final Promise promise) throws IOException {
     Request mRequest = this.mApiManager.delete(url, headers);
-
     mClient.newCall(mRequest).enqueue(new Callback() {
       @Override
       public void onFailure(Call call, IOException e) {
@@ -139,9 +130,7 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
 
       @Override
       public void onResponse(Call call, Response response) throws IOException {
-        final InputStream in = response.body().byteStream();
-        inflateData = mUtils.getDataInflate(in);
-
+        inflateData = mUtils.getDataInflate(response);
         promise.resolve(inflateData);
       }
     });
