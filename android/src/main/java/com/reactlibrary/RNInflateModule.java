@@ -14,6 +14,7 @@ import com.reactlibrary.common.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -33,7 +34,11 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
     super(reactContext);
     this.reactContext = reactContext;
     this.mApiManager = new ApiManager();
-    this.mClient = new OkHttpClient();
+    this.mClient = new OkHttpClient.Builder()
+    .connectTimeout(50, TimeUnit.SECONDS)
+    .writeTimeout(50, TimeUnit.SECONDS)
+    .readTimeout(50, TimeUnit.SECONDS)
+    .build();;
     this.mUtils = new Utils();
   }
 
@@ -43,9 +48,8 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void get(String url, ReadableMap headers, ReadableMap params , final Promise promise) throws IOException {
+  public void get(String url, ReadableMap headers, ReadableMap params, final Promise promise) throws IOException {
     Request mRequest = this.mApiManager.get(url, headers, params);
-
     mClient.newCall(mRequest).enqueue(new Callback() {
       @Override
       public void onFailure(Call call, IOException e) {

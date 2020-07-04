@@ -20,7 +20,6 @@ function IRModel(record) {
 
 IRModel.prototype = {
   fix: function(key, value) {
-    console.log('fix', value)
     return assocPath([key], value, this)
   },
   set: function(key, value) {
