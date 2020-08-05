@@ -28,7 +28,6 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
   private final Utils mUtils;
   private static final String REQUEST_ERROR = "REQUEST_ERROR";
   private final OkHttpClient mClient;
-  private WritableMap inflateData;
 
   public RNInflateModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -59,7 +58,7 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
 
       @Override
       public void onResponse(Call call, Response response) throws IOException {
-        inflateData = mUtils.getDataInflate(response);
+        WritableMap inflateData = mUtils.getDataInflate(response);
         promise.resolve(inflateData);
       }
     });
@@ -78,7 +77,7 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
 
       @Override
       public void onResponse(Call call, Response response) throws IOException {
-        inflateData = mUtils.getDataInflate(response);
+        WritableMap inflateData = mUtils.getDataInflate(response);
         promise.resolve(inflateData);
       }
     });
@@ -97,7 +96,7 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
 
       @Override
       public void onResponse(Call call, Response response) throws IOException {
-        inflateData = mUtils.getDataInflate(response);
+        WritableMap inflateData = mUtils.getDataInflate(response);
         promise.resolve(inflateData);
       }
     });
@@ -116,7 +115,7 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
 
       @Override
       public void onResponse(Call call, Response response) throws IOException {
-        inflateData = mUtils.getDataInflate(response);
+        WritableMap inflateData = mUtils.getDataInflate(response);
         promise.resolve(inflateData);
       }
     });
@@ -134,7 +133,7 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
 
       @Override
       public void onResponse(Call call, Response response) throws IOException {
-        inflateData = mUtils.getDataInflate(response);
+        WritableMap inflateData = mUtils.getDataInflate(response);
         promise.resolve(inflateData);
       }
     });

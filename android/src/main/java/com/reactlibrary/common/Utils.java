@@ -15,7 +15,6 @@ import okhttp3.Response;
 
 public class Utils {
     private RNHelper mHelper;
-    private WritableMap mapWrite;
 
     public void Utils() {
         this.mHelper = new RNHelper();
@@ -34,6 +33,7 @@ public class Utils {
     }
 
     public WritableMap getDataInflate(Response res) {
+        WritableMap mapWrite;
         try {
             String validJson;
             if (isZipped(res)) {
