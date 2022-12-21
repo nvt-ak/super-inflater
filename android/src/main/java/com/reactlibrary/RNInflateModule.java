@@ -26,7 +26,6 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
   private final ReactApplicationContext reactContext;
   private final ApiManager mApiManager;
   private final Utils mUtils;
-  private static final String REQUEST_ERROR = "REQUEST_ERROR";
   private final OkHttpClient mClient;
 
   public RNInflateModule(ReactApplicationContext reactContext) {
@@ -52,7 +51,7 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
     mClient.newCall(mRequest).enqueue(new Callback() {
       @Override
       public void onFailure(Call call, IOException e) {
-        promise.reject(REQUEST_ERROR, e.getCause());
+        promise.reject(e.getMessage(), e.getCause());
         call.cancel();
       }
 
@@ -71,7 +70,7 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
     mClient.newCall(mRequest).enqueue(new Callback() {
       @Override
       public void onFailure(Call call, IOException e) {
-        promise.reject(REQUEST_ERROR, e.getCause());
+        promise.reject(e.getMessage(), e.getCause());
         call.cancel();
       }
 
@@ -90,7 +89,7 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
     mClient.newCall(mRequest).enqueue(new Callback() {
       @Override
       public void onFailure(Call call, IOException e) {
-        promise.reject(REQUEST_ERROR, e.getCause());
+        promise.reject(e.getMessage(), e.getCause());
         call.cancel();
       }
 
@@ -109,7 +108,7 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
     mClient.newCall(mRequest).enqueue(new Callback() {
       @Override
       public void onFailure(Call call, IOException e) {
-        promise.reject(REQUEST_ERROR, e.getCause());
+        promise.reject(e.getMessage(), e.getCause());
         call.cancel();
       }
 
@@ -127,7 +126,7 @@ public class RNInflateModule extends ReactContextBaseJavaModule {
     mClient.newCall(mRequest).enqueue(new Callback() {
       @Override
       public void onFailure(Call call, IOException e) {
-        promise.reject(REQUEST_ERROR, e.getCause());
+        promise.reject(e.getMessage(), e.getCause());
         call.cancel();
       }
 
